@@ -3,20 +3,22 @@ import Link from "next/link";
 import styles from "./index.module.css";
 import { listProducts, Product } from "../lib/product";
 import { Layout } from "../components/Layout";
+import { calculateCartCount } from "../lib/cartCount";
 
 const TopPage: FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [cartCount, setCartCount] = useState<number>(0);
 
   useEffect(() => {
+    setCartCount(calculateCartCount());
     listProducts().then((products) => setProducts(products));
   }, []);
 
   return (
-    <Layout>
+    <Layout cartCount={cartCount}>
       <ul className={styles.list}>
         {products.map((product) => (
           <li key={product.id} className={styles.listItem}>
-            {/* このリンク先はないので新規ページを作る */}
             <Link href={`/products/${product.id}`}>
               <a className={styles.link}>
                 <div className={styles.imageWrapper}>

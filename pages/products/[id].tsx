@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { detailProduct, Product } from "../../lib/product";
 import { useRouter } from 'next/router';
 import { Layout } from '../../components/Layout';
+import { calculateCartCount } from '../../lib/cartCount';
 
 // カートに追加するデータの型
 export type CartItem = {
@@ -11,26 +12,23 @@ export type CartItem = {
 
 const ProductDetail: FC = () => {
   const [product, setProduct] = useState<Product>();
+  const [cartCount, setCartCount] = useState<number>(0);
   const router = useRouter();
   const id = router.query.id as string;
 
   const addToCart = () => {
-    let newCartList;
+    let newCartList: CartItem[] = [];
     if (!localStorage.getItem("cart")) {
       newCartList = new Array({
-        product: product,
+        product: product!,
         quantity: 1,
       })
     } else {
-      const cartList: CartItem[] = JSON.parse(localStorage.getItem("cart")!);
-      let flag = false;
-      cartList.map(list => {
-        if (list.product.id === product!.id) {
-          list.quantity += 1;
-          flag = true;
-        }
-      })
-      if (!flag) {
+      const cartList: CartItem[] = JSON.parse(localStorage.getItem("cart") || '[]');
+      const item = cartList.find(element => element.product.id === product?.id)
+      if (item) {
+        item.quantity++;
+      } else {
         const newItem: CartItem = {
           product: product!,
           quantity: 1,
@@ -40,10 +38,11 @@ const ProductDetail: FC = () => {
       newCartList = cartList;
     }
     localStorage.setItem("cart", JSON.stringify(newCartList));
-    console.log(newCartList)
+    setCartCount(cartCount + 1);
   }
 
   useEffect(() => {
+    setCartCount(calculateCartCount());
     if (!id) return;
     detailProduct(id)
       .then((product) => {
@@ -54,7 +53,9 @@ const ProductDetail: FC = () => {
 
   return (
     <>
-      <Layout/>
+      <Layout
+        cartCount={cartCount}
+      />
       <img src={product?.imageUrl} alt={`${product?.name}の写真`} />
       <div>{product?.name}</div>
       <div>{product?.price}円</div>

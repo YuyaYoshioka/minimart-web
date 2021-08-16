@@ -1,23 +1,16 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import styles from "./Layout.module.css";
-import { CartItem } from "../pages/products/[id]";
 
-type Props = {};
+type Props = {
+  cartCount: number
+};
 
-export const Layout: FC<Props> = ({ children }) => {
-  const [cartCount, setCartCount] = useState<number>(0);
-
-  useEffect(() => {
-    if (!localStorage.getItem('cart')) return;
-    const cartList: CartItem[] = JSON.parse(localStorage.getItem("cart")!);
-    let cartCount = 0;
-    cartList!.forEach(list => {
-      cartCount += list.quantity
-    })
-    setCartCount(cartCount)
-  }, [])
+export const Layout: FC<Props> = ({ 
+  children,
+  cartCount,
+}) => {
   
   return (
     <div>

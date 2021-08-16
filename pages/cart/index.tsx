@@ -6,15 +6,19 @@ import { CartItem } from '../products/[id]';
 const CartPage: FC = () => {
   const [cartList, setCartList] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [cartCount, setCartCount] = useState<number>(0);
   const router = useRouter();
 
   useEffect(() => {
     const cartList: CartItem[] = JSON.parse(localStorage.getItem("cart")!) || [];
     setCartList(cartList)
     let totalPrice = 0;
+    let cartCount = 0;
     cartList.forEach(list => {
+      cartCount += list.quantity;
       totalPrice += list.product.price * list.quantity;
     })
+    setCartCount(cartCount)
     setTotalPrice(totalPrice)
   }, [])
 
@@ -26,7 +30,7 @@ const CartPage: FC = () => {
 
   return (
     <>
-      <Layout/>
+      <Layout cartCount={cartCount}/>
       <ul>
         {cartList.map((list: CartItem) => {
           return(
