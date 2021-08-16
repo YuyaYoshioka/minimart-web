@@ -21,6 +21,9 @@ export const Layout: FC<Props> = ({
         <h1 className={styles.title}>
           <Link href="/">Mini Mart</Link>
         </h1>
+        <h2>
+          <Link href="/user">マイページ</Link>
+        </h2>
         <div className={styles.cart}>
           <Link href="/cart">
             <a>
