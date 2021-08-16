@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { Layout } from '../../components/Layout';
 import { CartItem } from '../products/[id]';
 
+type Sign = '+' | '-';
+
 const CartPage: FC = () => {
   const [cartList, setCartList] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
@@ -28,16 +30,32 @@ const CartPage: FC = () => {
     router.push('/')
   }
 
+  const changeCount = (sign: Sign ,idx: number): void => {
+    let newCartList: CartItem[] = cartList.concat();
+    if (sign === '+') {
+      newCartList[idx].quantity++;
+      setCartCount(cartCount + 1);
+    } else if (sign === '-') {
+      if (newCartList[idx].quantity >= 1) {
+        newCartList[idx].quantity--;
+        setCartCount(cartCount - 1)
+      }
+    }
+    setCartList(newCartList);
+  }
+
   return (
     <>
       <Layout cartCount={cartCount}/>
       <ul>
-        {cartList.map((list: CartItem) => {
+        {cartList.map((list: CartItem, idx: number) => {
           return(
             <li key={list.product.id}>
               <img src={list.product.imageUrl} alt={`${list.product.name}の写真`} />
               <div>{list.product.name} {list.product.price}円</div>
               <div>{list.quantity}個</div>
+              <button onClick={() => changeCount("+", idx)}>+</button>
+              <button onClick={() => changeCount("-", idx)}>-</button>
             </li>
         )
         })}
