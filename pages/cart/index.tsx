@@ -51,10 +51,12 @@ const CartPage: FC = () => {
     if (sign === '+') {
       newCartList[idx].quantity++;
       setCartCount(cartCount + 1);
+      setTotalPrice(totalPrice + newCartList[idx].product.price);
     } else if (sign === '-') {
       if (newCartList[idx].quantity >= 1) {
         newCartList[idx].quantity--;
         setCartCount(cartCount - 1)
+        setTotalPrice(totalPrice - newCartList[idx].product.price)
       }
     }
     setCartList(newCartList);
