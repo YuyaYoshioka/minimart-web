@@ -2,8 +2,14 @@ import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Layout } from '../../components/Layout';
 import { CartItem } from '../products/[id]';
+import { postOrder } from '../../lib/order';
 
 type Sign = '+' | '-';
+
+type Param = {
+  productId: string,
+  quantity: number,
+}
 
 const CartPage: FC = () => {
   const [cartList, setCartList] = useState<CartItem[]>([]);
@@ -25,9 +31,19 @@ const CartPage: FC = () => {
   }, [])
 
   const order = () => {
-    window.alert("注文しました");
-    localStorage.removeItem('cart')
-    router.push('/')
+    const params: Param[] = [];
+    cartList.forEach(item => {
+      const tempParams = {
+        productId: item.product.id,
+        quantity: item.quantity,
+      }
+      params.push(tempParams)
+    })
+    postOrder(params)
+      .then(order => {
+        router.push(`orders/${order.id}`);
+        localStorage.removeItem('cart');
+      });
   }
 
   const changeCount = (sign: Sign ,idx: number): void => {
